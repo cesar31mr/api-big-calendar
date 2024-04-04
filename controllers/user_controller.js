@@ -31,24 +31,22 @@ function login(req, res){
     const email = params.email;
     const password = params.password;
 
-    user.findOne({ email: email }, (err, user) => {
-        if (err) return res.status(500).send({ message: 'Error en la petición' });
-        if (user) {
-            bcrypt.compare(password, user.password, (err, check) => {
-                if (check) {
-                    if (params.gettoken) {
-                        return res.status(200).send({ token: jwt.createToken(user) });
-                    } else {
-                        user.password = undefined;
-                        return res.status(200).send({ user });
-                    }
+    user.findOne({email: email}).then(user => {
+        if (!user) return res.status(404).send({ message: 'El usuario no se ha podido identificar' });
+        bcrypt.compare(password, user.password, (err, check) => {
+            if (check) {
+                if (params.gettoken) {
+                    return res.status(200).send({ token: jwt.createToken(user) });
                 } else {
-                    return res.status(404).send({ message: 'El usuario no se ha podido identificar' });
+                    user.password = undefined;
+                    return res.status(200).send({ user });
                 }
-            });
-        } else {
-            return res.status(404).send({ message: 'El usuario no se ha podido identificar' });
-        }
+            } else {
+                return res.status(404).send({ message: 'El usuario no se ha podido identificar' });
+            }
+        });
+    }).catch(err => {
+        return res.status(500).send({ message: 'Error en la petición' });
     });
 }
 
@@ -60,10 +58,11 @@ function updateUser(req, res) {
         return res.status(500).send({ message: 'No tienes permiso para actualizar este usuario' });
     }
 
-    user.findByIdAndUpdate(userId, update, { new: true }, (err, userUpdated) => {
-        if (err) return res.status(500).send({ message: 'Error en la petición' });
+    user.findByIdAndUpdate(userId, update).then(userUpdated => {
         if (!userUpdated) return res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
         return res.status(200).send({ user: userUpdated });
+    }).catch(err => {
+        return res.status(500).send({ message: 'Error en la petición' });
     });
 }
 

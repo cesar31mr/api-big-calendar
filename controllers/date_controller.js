@@ -8,23 +8,29 @@ function saveDate(req, res) {
     newDate.title = title;
     newDate.user = req.params.id;
 
-    newDate.save((err, dateStored) => {
-        if (err) return res.status(500).send({ message: 'Error al guardar el recordatorio' });
+    newDate.save().then((dateStored) => {
         if (dateStored) {
             res.status(200).send({ date: dateStored });
         } else {
             res.status(404).send({ message: 'No se ha registrado el recordatorio' });
         }
+    }
+    ).catch((err) => {
+        res.status(500).send({ message: 'Error al guardar el recordatorio' });
     });
 }
 
 function getDatesByUser(req, res) {
     const userId = req.params.id;
 
-    dates.find({ user: userId }, (err, dates) => {
-        if (err) return res.status(500).send({ message: 'Error en la petición' });
-        if (!dates) return res.status(404).send({ message: 'No hay recordatorios' });
-        res.status(200).send({ dates });
+    dates.find({ user: userId }).then((dates) => {
+        if (dates) {
+            res.status(200).send({ dates });
+        } else {
+            res.status(404).send({ message: 'No hay recordatorios' });
+        }
+    }).catch((err) => {
+        res.status(500).send({ message: 'Error en la petición' });
     });
 }
 
@@ -32,20 +38,28 @@ function updateDate(req, res) {
     const dateId = req.params.id;
     const update = req.body
 
-    dates.findByIdAndUpdate(dateId, update, (err, dateUpdated) => {
-        if (err) return res.status(500).send({ message: 'Error en la petición' });
-        if (!dateUpdated) return res.status(404).send({ message: 'No se ha podido actualizar el recordatorio' });
-        res.status(200).send({ date: dateUpdated });
+    dates.findByIdAndUpdate(dateId, update).then((dateUpdated) => {
+        if (dateUpdated) {
+            res.status(200).send({ date: dateUpdated });
+        } else {
+            res.status(404).send({ message: 'No se ha podido actualizar el recordatorio' });
+        }
+    }).catch((err) => {
+        res.status(500).send({ message: 'Error en la petición' });
     });
 }
 
 function deleteDate(req, res) {
     const dateId = req.params.id;
 
-    dates.findByIdAndDelete(dateId, (err, dateDeleted) => {
-        if (err) return res.status(500).send({ message: 'Error en la petición' });
-        if (!dateDeleted) return res.status(404).send({ message: 'No se ha podido eliminar el recordatorio' });
-        res.status(200).send({ date: dateDeleted });
+    dates.findByIdAndDelete(dateId).then((dateDeleted) => {
+        if (dateDeleted) {
+            res.status(200).send({ date: dateDeleted });
+        } else {
+            res.status(404).send({ message: 'No se ha podido eliminar el recordatorio' });
+        }
+    }).catch((err) => {
+        res.status(500).send({ message: 'Error en la petición' });
     });
 }
 
