@@ -2,7 +2,7 @@ const express = require('express');
 const dateController = require('../controllers/date_controller');
 
 const api = express.Router();
-api.post('/saveDate', dateController.saveDate);
+api.post('/saveDate/:id', dateController.saveDate);
 api.get('/getDatesByUser/:id', dateController.getDatesByUser);
 api.put('/updateDate/:id', dateController.updateDate);
 api.delete('/deleteDate/:id', dateController.deleteDate);

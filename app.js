@@ -39,7 +39,7 @@ mongoose.connect(mongodb).then(res => {
 
 app.use(body_parser.json());
 app.use(body_parser.urlencoded({extended: true}));
-app.use('/api', date_route);
+app.use('/api/date', date_route);
 app.use('/api', user_route);
 
 module.exports = app;

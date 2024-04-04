@@ -8,6 +8,7 @@ function signUp(req, res) {
     newUser.name = name;
     newUser.email = email;
     newUser.active = true;
+    newUser.creation = Date.now();
 
     if(!password) return res.status(500).send({ message: 'Introduce la contraseña' });
 

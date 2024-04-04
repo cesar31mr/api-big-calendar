@@ -6,7 +6,7 @@ function saveDate(req, res) {
     newDate.start = start;
     newDate.end = end;
     newDate.title = title;
-    newDate.user = req.user.sub;
+    newDate.user = req.params.id;
 
     newDate.save((err, dateStored) => {
         if (err) return res.status(500).send({ message: 'Error al guardar el recordatorio' });
